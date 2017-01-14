@@ -1,3 +1,5 @@
+import signal
+
 from Levenshtein import ratio
 
 from party import interesting_party
@@ -14,7 +16,16 @@ class Game:
 
 
 if __name__ == '__main__':
+    import sys
+
     game = Game()
+
+    def give_up(s, f):
+        print('\nyou gave up\nthe answer was: {}'.format(game.original))
+        sys.exit(1)
+
+    signal.signal(signal.SIGINT, give_up)
+
     print(game.clue)
     while True:
         score = game.play(input('guess: '))
@@ -22,4 +33,4 @@ if __name__ == '__main__':
             print('correct')
             break
         else:
-            print('incorrect; closeness: {}'.format(score))
+            print('incorrect; closeness: {:.1%}'.format(score))
