@@ -1,3 +1,5 @@
+from datetime import datetime, timedelta
+
 import tweepy
 
 from game import Game
@@ -12,12 +14,14 @@ handle = auth.get_username()
 
 
 class TwitterGame(tweepy.StreamListener):
-    def __init__(self, api, game, trigger_status_id):
+    def __init__(self, api, game, initial_status_id):
         self.game = game
-        self.trigger_status_ids = {trigger_status_id}
+        self.initial_status_id = initial_status_id
+        self.trigger_status_ids = {initial_status_id}
+        self.end_at = datetime.now() + timedelta(hours=1)
         return super().__init__(api)
 
-    def on_status(self, status):
+    def handle_play(self, status):
         if not status.text.startswith('@{}'.format(handle)):
             # ignore things that aren't mentions
             return
@@ -49,6 +53,23 @@ class TwitterGame(tweepy.StreamListener):
                 ),
                 in_reply_to_status_id=status.id,
             ).id)
+
+    def on_status(self, status):
+        rv = self.handle_play(status)
+
+        if rv is False:
+            # there's no need to force the game to end; it's already over
+            return rv
+
+        elif datetime.now() > self.end_at:
+            api.update_status(
+                'Game over. The answer was {}'.format(self.game.original),
+                in_reply_to_status_id=self.initial_status_id,
+            )
+            return False
+
+        else:
+            return rv
 
 
 def run_game():
