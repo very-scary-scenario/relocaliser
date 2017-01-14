@@ -31,6 +31,8 @@ class TwitterGame(tweepy.StreamListener):
             # ignore things that aren't replies to the game in progress
             return
 
+        self.trigger_status_ids.add(status.id)
+
         text = html.unescape(status.text)
         entry = text.replace('@{}'.format(handle), '').strip()
         score = self.game.play(entry)
