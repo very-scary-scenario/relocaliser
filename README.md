@@ -1,6 +1,7 @@
 # Relocaliser 3000™
 
-An entry to [GAMES MADE QUICK???](https://itch.io/jam/games-made-quick).
+An extremely difficult-to-speedrun entry to [GAMES MADE
+QUICK???](https://itch.io/jam/games-made-quick).
 
 ## Playing on Twitter
 
