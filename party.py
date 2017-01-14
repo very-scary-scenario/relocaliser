@@ -80,7 +80,11 @@ def party(phrase, source='en', **params):
 
 def interesting_party(*a, **k):
     while True:
-        phrase = get_name()
+        while True:
+            phrase = get_name()
+            if len(phrase) < 100:
+                break
+
         steps = party(phrase, *a, **k)
         result = steps[-1][-1]
 

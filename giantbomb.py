@@ -27,7 +27,7 @@ def giantbomb(method, **params):
     return resp.json()
 
 
-def get_name():
+def _get_name():
     seen_ids = set()
     total = giantbomb('games')['number_of_total_results']
 
@@ -37,6 +37,7 @@ def get_name():
     )['results']:
         if (
             game['id'] in seen_ids or
+            not game.get('name') or
 
             # and now we have to attempt to filter out games that nobody
             # has heard of
@@ -47,3 +48,10 @@ def get_name():
             continue
 
         return game['name']
+
+
+def get_name():
+    while True:
+        name = _get_name()
+        if name:
+            return name
