@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+import html
 
 import tweepy
 
@@ -30,7 +31,7 @@ class TwitterGame(tweepy.StreamListener):
             # ignore things that aren't replies to the game in progress
             return
 
-        text = status.text
+        text = html.unescape(status.text)
         entry = text.replace('@{}'.format(handle), '').strip()
         score = self.game.play(entry)
 
