@@ -1,18 +1,22 @@
 import random
 import requests
+from Levenshtein import ratio
 
+from giantbomb import get_name
 from keys import yandex_translate
 
 
 def _api(method, **params):
-    return requests.get(
+    resp = requests.get(
         'https://translate.yandex.net/api/v1.5/tr.json/{}'
         .format(method),
         params={
             'key': yandex_translate,
             **params,
         }
-    ).json()
+    )
+    resp.raise_for_status()
+    return resp.json()
 
 
 def get_directions():
@@ -74,8 +78,15 @@ def party(phrase, source='en', **params):
     return steps
 
 
-if __name__ == '__main__':
-    import sys
-    phrase = ' '.join(sys.argv[1:])
+def interesting_party(*a, **k):
+    while True:
+        phrase = get_name()
+        steps = party(phrase, *a, **k)
+        result = steps[-1][-1]
 
-    print('\n'.join(' '.join(i) for i in party(phrase)))
+        if ratio(phrase.lower(), result.lower()) < 0.7:
+            return steps
+
+
+if __name__ == '__main__':
+    print('\n'.join(': '.join(i) for i in interesting_party()))
