@@ -81,5 +81,4 @@ def run_game():
 
 
 if __name__ == '__main__':
-    while True:
-        run_game()
+    run_game()
