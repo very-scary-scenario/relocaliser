@@ -66,7 +66,7 @@ class TwitterGame(tweepy.StreamListener):
 
         elif datetime.now() > self.end_at:
             api.update_status(
-                'Game over. The answer was {}'.format(self.game.original),
+                'Game over. The answer was {}.'.format(self.game.original),
                 in_reply_to_status_id=self.initial_status_id,
             )
             return False
