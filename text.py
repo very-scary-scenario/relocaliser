@@ -1,4 +1,4 @@
-def sanitise(text):
+def normalise(text):
     return (text.replace('“', '"')
             .replace('”', '"')
             .replace("‘", "'")

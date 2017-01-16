@@ -3,7 +3,7 @@ import signal
 from Levenshtein import ratio
 
 from party import interesting_party
-from text import sanitise
+from text import normalise
 
 
 class Game:
@@ -13,7 +13,7 @@ class Game:
         self.clue = self.steps[-1][-1]
 
     def play(self, guess):
-        return ratio(sanitise(guess), sanitise(self.original))
+        return ratio(normalise(guess), normalise(self.original))
 
 
 if __name__ == '__main__':
