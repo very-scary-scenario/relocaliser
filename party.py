@@ -31,7 +31,7 @@ def translate(text, direction):
     return resp
 
 
-def build_route(steps=5, source='en', target='en'):
+def build_route(steps=8, source='en', target='en'):
     """
     Build a random route through the translator with as many steps as
     requested, starting at `source` and ending at `target`
