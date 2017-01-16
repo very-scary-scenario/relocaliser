@@ -4,4 +4,5 @@ def sanitise(text):
             .replace("‘", "'")
             .replace("’", "'")
             .replace('...', '…')
-            .lower())
+            .lower()
+            .replace('é', 'e'))
