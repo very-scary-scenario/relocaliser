@@ -64,7 +64,7 @@ class TwitterGame(tweepy.StreamListener):
                 "@{} Correct! I'll start a new game soon.".format(
                     status.author.screen_name, score,
                 ),
-                n_reply_to_status_id=status.id,
+                in_reply_to_status_id=status.id,
             )
             api.retweet(status.id)
             self.over = True
