@@ -31,10 +31,13 @@ def _get_name():
     seen_ids = set()
     total = giantbomb('games')['number_of_total_results']
 
-    for game in giantbomb(
+    games = giantbomb(
         'games',
         offset=random.randrange(0, total-LIMIT)
-    )['results']:
+    )['results']
+    random.shuffle(games)
+
+    for game in games:
         if (
             game['id'] in seen_ids or
             not game.get('name') or
