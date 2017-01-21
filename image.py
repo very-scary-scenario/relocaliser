@@ -1,4 +1,4 @@
-import cairo 
+import cairocffi as cairo
 from cairosvg import svg2png
 from io import BytesIO
 import os
