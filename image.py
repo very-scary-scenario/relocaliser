@@ -1,6 +1,7 @@
 import cairo 
 from cairosvg import svg2png
-from io import BytesIO 
+from io import BytesIO
+import os
 
 # Yes going through cairo to a png and then back into cairo again
 # But all SVG libraries are hot garbage and most don't work at all
@@ -8,11 +9,8 @@ from io import BytesIO
 # So we're stuck with the roundtrip.
 
 # Set of languages for which we have a flag
-# Should probably do this programmatically
-known_langs = {'hr', 'uk', 'fi', 'mk', 'hy', 'sv', 'bg', 'ru', 'hu', 'pl', 
-               'el', 'de', 'tr', 'sl', 'es', 'en', 'ca', 'pt', 'cs', 'nl', 
-               'ro', 'sq', 'sk', 'be', 'sr', 'fr', 'et', 'lv', 'it', 'da', 
-               'no', 'lt', 'az'}
+known_langs = set([filename[:-4] for filename in os.listdir("flags")
+                   if filename != "unknown.svg"])
 
 def generate_image(steps, filename):
     # Set all the constants!
