@@ -30,6 +30,8 @@ yandex_translate = 'your yandex translate api key'
 giantbomb = 'your giant bomb api key'
 ```
 
+A prototype for this file can be found in `keys.py.prototype`. (If you only want to play locally, you can ignore the Twitter-related lines.)
+
 You'll then need to `cd` to your cloned repository and run `pip3 install -r
 requirements.txt`. Then, you should be able to play the game on the command
 line by running `python3 game.py`.
