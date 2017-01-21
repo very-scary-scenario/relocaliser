@@ -1,3 +1,4 @@
+# Translate acronyms from Yandex into full names for alt text
 # Could instead use iso-639, but this works for now
 
 languages = {'hr': 'Croatian', 
