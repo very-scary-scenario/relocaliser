@@ -4,10 +4,13 @@ import os
 
 from camel import Camel
 import tweepy
+import json
 
 from game import Game, camel_registry
 import keys
 
+from languages import languages
+from image import generate_image
 
 auth = tweepy.OAuthHandler(keys.consumer_key, keys.consumer_secret)
 auth.set_access_token(keys.access_token, keys.access_token_secret)
@@ -18,6 +21,10 @@ handle = auth.get_username()
 GAMES_DIR = os.path.join(os.path.dirname(__file__), 'games')
 if not os.path.isdir(GAMES_DIR):
     os.mkdir(GAMES_DIR)
+
+IMAGES_DIR = os.path.join(os.path.dirname(__file__), 'images')
+if not os.path.isdir(IMAGES_DIR):
+    os.mkdir(IMAGES_DIR)
 
 camel = Camel([camel_registry])
 
@@ -32,7 +39,7 @@ class TwitterGame(tweepy.StreamListener):
         self.trigger_status_ids = [initial_status_id]
 
         if end_at is None:
-            end_at = datetime.now() + timedelta(hours=1)
+            end_at = datetime.now() + timedelta(seconds=1)
 
         self.end_at = end_at
         self.over = over
@@ -42,6 +49,40 @@ class TwitterGame(tweepy.StreamListener):
     def save(self):
         with open(os.path.join(GAMES_DIR, self.end_at.isoformat()), 'w') as sf:
             sf.write(camel.dump(self))
+    
+    def tweet_image(self, status, *args, **kwargs):
+        image_path = os.path.join(IMAGES_DIR,
+                                  "{}.png".format(self.end_at.isoformat()))
+        generate_image(self.game.steps, image_path)
+
+        # https://github.com/tweepy/tweepy/issues/643
+        upload = api.media_upload(filename=image_path)
+        media_ids = [upload.media_id_string]
+        alt_text = " >> ".join("{}: {}"
+                               .format(languages[step[0]], 
+                                       step[-1]) for step in self.game.steps)
+
+        # http://github.com/tweepy/tweepy/pull/727/commits/b387331c174a451cb8dba44b4e0c7988a92bad1b
+        # Could we subclass API and implement this pull request ourselves?
+        post_data = {
+            "media_id": media_ids[0],
+            "alt_text": {
+                "text": alt_text
+            }
+        }
+        json = tweepy.utils.import_simplejson()
+        tweepy.binder.bind_api(api=api,
+                               path='/media/metadata/create.json',
+                               method='POST',
+                               allowed_param=[],
+                               require_auth=True,
+                               upload_api=True
+                               )(post_data=json.dumps(post_data))
+
+        api.update_status(media_ids=media_ids,
+                          status=status,
+                          *args, **kwargs)
+
 
     def handle_play(self, status):
         if not status.text.startswith('@{}'.format(handle)):
@@ -60,13 +101,13 @@ class TwitterGame(tweepy.StreamListener):
 
         if score == 1:
             # correct! end the game
-            api.update_status(
-                "@{} Correct! I'll start a new game soon.".format(
-                    status.author.screen_name, score,
+            api.retweet(status.id)
+            self.tweet_image(
+                "Well done @{}! I'll start a new game soon.".format(
+                    status.author.screen_name,
                 ),
                 in_reply_to_status_id=status.id,
             )
-            api.retweet(status.id)
             self.over = True
 
             return False
@@ -88,7 +129,7 @@ class TwitterGame(tweepy.StreamListener):
             return rv
 
         elif datetime.now() > self.end_at:
-            api.update_status(
+            self.tweet_image(
                 'Game over. The answer was {}.'.format(self.game.original),
                 in_reply_to_status_id=self.initial_status_id,
             )

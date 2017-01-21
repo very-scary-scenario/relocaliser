@@ -4,3 +4,5 @@ requests
 python-Levenshtein
 tweepy==3.5.0
 camel==0.1
+pycairo
+cairosvg
