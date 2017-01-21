@@ -45,8 +45,10 @@ def generate_image(steps, filename):
     # Create the background
     context.set_source_rgb(*background_colour)
 
-    # Leave the last row transparent so Twitter doesn't JPEG us
+    # Need to leave one pixel transparent to prevent Twitter JPEGing us
     context.rectangle(0, 0, width, height - 1)
+    context.fill()
+    context.rectangle(0, height - 1, width - 1, 1)
     context.fill()
     context = cairo.Context(image)
     
