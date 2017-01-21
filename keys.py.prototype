@@ -1,0 +1,15 @@
+# This file is a skeleton for keys.py
+# Copy this file to keys.py, and insert API keys into the strings
+
+# See http://www.giantbomb.com/api/
+giantbomb = ''
+
+# See https://tech.yandex.com/translate/
+yandex_translate = ''
+
+# See https://apps.twitter.com/
+consumer_key = ''
+consumer_secret = ''
+
+access_token = ''
+access_token_secret = ''
