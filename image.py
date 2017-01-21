@@ -30,7 +30,7 @@ def generate_image(steps, filename):
     flag_height = 64 # TODO: Work out how to read this from the file
     flag_width = 64 # ditto
 
-    font_name = "Helvetica"
+    font_name = "FreeSans"
     font_slant = cairo.FONT_SLANT_NORMAL
     font_weight = cairo.FONT_WEIGHT_NORMAL
     font_colour = (1, 1, 1)

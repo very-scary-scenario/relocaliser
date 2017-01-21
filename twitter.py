@@ -49,7 +49,23 @@ class TwitterGame(tweepy.StreamListener):
     def save(self):
         with open(os.path.join(GAMES_DIR, self.end_at.isoformat()), 'w') as sf:
             sf.write(camel.dump(self))
-    
+
+    def get_alt_text(self):
+        # Make best effort to include all information within 420 characters
+        alt_text = " » ".join("{}: {}"
+                               .format(languages[step[0]],
+                                       step[-1]) for step in self.game.steps)
+        if len(alt_text) <= 420:
+            return alt_text
+
+        alt_text = " » ".join("{}: {}"
+                               .format(step[0],
+                                       step[-1]) for step in self.game.steps)
+        if len(alt_text) <= 420:
+            return alt_text
+
+        return alt_text[:419] + "…"
+
     def tweet_image(self, status, *args, **kwargs):
         image_path = os.path.join(IMAGES_DIR,
                                   "{}.png".format(self.end_at.isoformat()))
@@ -58,16 +74,13 @@ class TwitterGame(tweepy.StreamListener):
         # https://github.com/tweepy/tweepy/issues/643
         upload = api.media_upload(filename=image_path)
         media_ids = [upload.media_id_string]
-        alt_text = " >> ".join("{}: {}"
-                               .format(languages[step[0]], 
-                                       step[-1]) for step in self.game.steps)
 
         # http://github.com/tweepy/tweepy/pull/727/commits/b387331c174a451cb8dba44b4e0c7988a92bad1b
         # Could we subclass API and implement this pull request ourselves?
         post_data = {
             "media_id": media_ids[0],
             "alt_text": {
-                "text": alt_text
+                "text": self.get_alt_text()
             }
         }
         json = tweepy.utils.import_simplejson()
