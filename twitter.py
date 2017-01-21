@@ -39,7 +39,7 @@ class TwitterGame(tweepy.StreamListener):
         self.trigger_status_ids = [initial_status_id]
 
         if end_at is None:
-            end_at = datetime.now() + timedelta(seconds=1)
+            end_at = datetime.now() + timedelta(hours=1)
 
         self.end_at = end_at
         self.over = over
