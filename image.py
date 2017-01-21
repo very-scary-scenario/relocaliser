@@ -27,7 +27,7 @@ def generate_image(steps, filename):
     background_colour = (0, 0, 0)
 
     font_size = 48
-    flag_height = 64 # We are dumb and don't read this from the file
+    flag_height = 64 # TODO: Work out how to read this from the file
     flag_width = 64 # ditto
 
     font_name = "Helvetica"
@@ -60,9 +60,9 @@ def generate_image(steps, filename):
         context.set_source_surface(flag, left_margin, top_margin + step * i)
         context.paint()
         
-        # Here we recreate the context because Cairo is dumb
-        # (or because I don't understand it properly)
-        # Either way otherwise we get no text.
+        # Here we recreate the context because Cairo
+        # gives us no text otherwise
+        # If there's an easier way I don't know it.
         context = cairo.Context(image)
         context.set_source_rgb(*font_colour)
 
