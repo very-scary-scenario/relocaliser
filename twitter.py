@@ -4,7 +4,6 @@ import os
 
 from camel import Camel
 import tweepy
-import json
 
 from game import Game, camel_registry
 import keys
@@ -52,15 +51,14 @@ class TwitterGame(tweepy.StreamListener):
 
     def get_alt_text(self):
         # Make best effort to include all information within 420 characters
-        alt_text = " » ".join("{}: {}"
-                               .format(languages[step[0]],
-                                       step[-1]) for step in self.game.steps)
+        alt_text = " » ".join("{}: {}".format(
+            languages[step[0]], step[-1]) for step in self.game.steps)
         if len(alt_text) <= 420:
             return alt_text
 
-        alt_text = " » ".join("{}: {}"
-                               .format(step[0],
-                                       step[-1]) for step in self.game.steps)
+        alt_text = " » ".join("{}: {}".format(
+            step[0], step[-1]) for step in self.game.steps)
+
         if len(alt_text) <= 420:
             return alt_text
 
@@ -95,7 +93,6 @@ class TwitterGame(tweepy.StreamListener):
         api.update_status(media_ids=media_ids,
                           status=status,
                           *args, **kwargs)
-
 
     def handle_play(self, status):
         if not status.text.startswith('@{}'.format(handle)):

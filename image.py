@@ -12,6 +12,7 @@ import os
 known_langs = set([filename[:-4] for filename in os.listdir("flags")
                    if filename != "unknown.svg"])
 
+
 def generate_image(steps, filename):
     # Set all the constants!
     # Possibly a better way to achieve this?
@@ -27,8 +28,8 @@ def generate_image(steps, filename):
     background_colour = (0, 0, 0)
 
     font_size = 48
-    flag_height = 64 # TODO: Work out how to read this from the file
-    flag_width = 64 # ditto
+    flag_height = 64  # TODO: Work out how to read this from the file
+    flag_width = 64  # ditto
 
     font_name = "FreeSans"
     font_slant = cairo.FONT_SLANT_NORMAL
@@ -51,7 +52,7 @@ def generate_image(steps, filename):
     context.rectangle(0, height - 1, width - 1, 1)
     context.fill()
     context = cairo.Context(image)
-    
+
     for i, (lang, title) in enumerate(steps):
         if lang in known_langs:
             flag = "flags/" + lang + ".svg"
@@ -61,7 +62,7 @@ def generate_image(steps, filename):
         flag = cairo.ImageSurface.create_from_png(flag)
         context.set_source_surface(flag, left_margin, top_margin + step * i)
         context.paint()
-        
+
         # Here we recreate the context because Cairo
         # gives us no text otherwise
         # If there's an easier way I don't know it.
@@ -71,7 +72,7 @@ def generate_image(steps, filename):
         # We will need to generalise this if the Yandex API ever supports CJK
         context.select_font_face(font_name, font_slant, font_weight)
         context.set_font_size(font_size)
-        (title_dx, title_dy, 
+        (title_dx, title_dy,
          title_width, title_height, *_) = context.text_extents(title)
         if title_width > text_width:
             context.set_font_size(font_size * text_width / title_width)
@@ -80,7 +81,7 @@ def generate_image(steps, filename):
                      - title_dy - title_height / 2)
         context.move_to(text_hposition - title_dx, text_vpos)
         context.show_text(title)
-        
+
     image.write_to_png(filename)
 
 
