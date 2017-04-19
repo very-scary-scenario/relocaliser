@@ -11,8 +11,9 @@ of these with what you think the actual game name is. If you are correct, your
 answer will be retweeted and a new game will start.
 
 Answers are case-insensitive, but punctuation should be correct. Game names are
-taken from [Giant Bomb](http://www.giantbomb.com), so if you're struggling with
-what variation of the name of a game to use, consult their database.
+taken at random from [Giant Bomb's wiki](https://www.giantbomb.com/games/), so
+if you're struggling with what variation of the name of a game to use, consult
+their database.
 
 Games end when someone gets the answer right, or when a guess is submitted more
 than an hour after the clue was posted.
