@@ -103,6 +103,10 @@ class TwitterGame(tweepy.StreamListener):
             # ignore things that aren't replies to the game in progress
             return
 
+        if status.id in self.trigger_status_ids:
+            # ignore things we've already responded to
+            return
+
         self.trigger_status_ids.append(status.id)
 
         text = html.unescape(status.text)
@@ -123,12 +127,15 @@ class TwitterGame(tweepy.StreamListener):
             return False
         else:
             # provide feeback
-            self.trigger_status_ids.append(api.update_status(
-                "@{} That's {:.1%} right.".format(
-                    status.author.screen_name, score,
-                ),
-                in_reply_to_status_id=status.id,
-            ).id)
+            try:
+                self.trigger_status_ids.append(api.update_status(
+                    "@{} That's {:.1%} right.".format(
+                        status.author.screen_name, score,
+                    ),
+                    in_reply_to_status_id=status.id,
+                ).id)
+            except tweepy.TweepError as e:
+                print(e)
 
     def on_status(self, status):
         rv = self.handle_play(status)
