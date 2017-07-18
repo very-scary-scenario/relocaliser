@@ -50,7 +50,12 @@ def _get_name():
         ):
             continue
 
-        return game['name']
+        name = game['name']
+
+        while '  ' in name:
+            name = name.replace('  ', ' ')
+
+        return name
 
 
 def get_name():
