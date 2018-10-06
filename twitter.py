@@ -28,7 +28,7 @@ if not os.path.isdir(IMAGES_DIR):
 camel = Camel([camel_registry])
 
 
-class TwitterGame(tweepy.StreamListener):
+class TwitterGame:
     def __init__(
         self, api, game, initial_status_id, trigger_status_ids=None,
         end_at=None, over=False,
@@ -38,12 +38,14 @@ class TwitterGame(tweepy.StreamListener):
         self.trigger_status_ids = [initial_status_id]
 
         if end_at is None:
-            end_at = datetime.now() + timedelta(hours=1)
+            end_at = datetime.now() + timedelta(hours=3)
 
         self.end_at = end_at
         self.over = over
         self.save()
-        return super().__init__(api)
+
+    def __str__(self):
+        return str(self.game)
 
     def save(self):
         with open(os.path.join(GAMES_DIR, self.end_at.isoformat()), 'w') as sf:
@@ -143,9 +145,16 @@ class TwitterGame(tweepy.StreamListener):
         if rv is False:
             # there's no need to force the game to end; it's already over
             self.save()
+            print('game already over')
             return rv
 
-        elif datetime.now() > self.end_at:
+        else:
+            self.save()
+            print('not from this game?')
+            return rv
+
+    def on_load(self):
+        if datetime.now() > self.end_at:
             self.tweet_image(
                 'Game over. The answer was {}.'.format(self.game.original),
                 in_reply_to_status_id=self.initial_status_id,
@@ -154,11 +163,6 @@ class TwitterGame(tweepy.StreamListener):
             self.save()
             return False
 
-        else:
-            self.save()
-            return rv
-
-    def on_connect(self):
         mentions = api.mentions_timeline(since_id=self.trigger_status_ids[-1])
         for status in sorted(mentions, key=lambda s: s.created_at):
             if self.on_status(status) is False:
@@ -184,8 +188,7 @@ def run_game():
         if listener.over:
             listener = start_new_game()
 
-    stream = tweepy.Stream(auth=api.auth, listener=listener)
-    stream.userstream()
+    listener.on_load()
 
 
 @camel_registry.dumper(TwitterGame, 'twitter_game', version=1)
@@ -200,7 +203,9 @@ def _dump_twitter_game(tg):
 
 @camel_registry.loader('twitter_game', version=1)
 def _load_twitter_game(data, version):
-    return TwitterGame(api=api, **data)
+    rv = TwitterGame(api=api, **data)
+    print('loaded {}'.format(rv))
+    return rv
 
 
 if __name__ == '__main__':

@@ -20,6 +20,9 @@ class Game:
         self.original = self.steps[0][-1]
         self.clue = self.steps[-1][-1]
 
+    def __str__(self):
+        return self.clue
+
     def play(self, guess):
         return ratio(normalise(guess), normalise(self.original))
 
