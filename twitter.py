@@ -156,7 +156,7 @@ class TwitterGame:
     def on_load(self):
         if datetime.now() > self.end_at:
             self.tweet_image(
-                'Game over. The answer was {}.'.format(self.game.original),
+                "Time's up. The answer was {}.".format(self.game.original),
                 in_reply_to_status_id=self.initial_status_id,
             )
             self.over = True
