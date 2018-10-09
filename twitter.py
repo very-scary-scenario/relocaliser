@@ -31,11 +31,12 @@ camel = Camel([camel_registry])
 class TwitterGame:
     def __init__(
         self, api, game, initial_status_id, trigger_status_ids=None,
-        end_at=None, over=False,
+        end_at=None, over=False, seen_statuses=None
     ):
         self.game = game
         self.initial_status_id = initial_status_id
-        self.trigger_status_ids = [initial_status_id]
+        self.trigger_status_ids = trigger_status_ids or [initial_status_id]
+        self.seen_statuses = seen_statuses or []
 
         if end_at is None:
             end_at = datetime.now() + timedelta(hours=8)
@@ -165,8 +166,14 @@ class TwitterGame:
 
         mentions = api.mentions_timeline(since_id=self.trigger_status_ids[-1])
         for status in sorted(mentions, key=lambda s: s.created_at):
+            if status.id in self.seen_statuses:
+                continue
+
             if self.on_status(status) is False:
                 raise ValueError('this game ended while we were away')
+
+            self.seen_statuses.append(status.id)
+            self.save()
 
 
 def start_new_game():
@@ -195,8 +202,8 @@ def run_game():
 def _dump_twitter_game(tg):
     return {
         a: getattr(tg, a) for a in [
-            'game', 'initial_status_id', 'trigger_status_ids', 'end_at',
-            'over',
+            'game', 'initial_status_id', 'trigger_status_ids', 'seen_statuses',
+            'end_at', 'over',
         ]
     }
 
