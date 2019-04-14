@@ -6,3 +6,7 @@ def normalise(text):
             .replace('...', '…')
             .lower()
             .replace('é', 'e'))
+
+
+def ignore_word_order(text):
+    return ' '.join(sorted(text.split(' ')))

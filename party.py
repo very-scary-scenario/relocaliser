@@ -4,6 +4,7 @@ from Levenshtein import ratio
 
 from giantbomb import get_name
 from keys import yandex_translate
+from text import ignore_word_order
 
 
 def _api(method, **params):
@@ -88,7 +89,27 @@ def interesting_party(*a, **k):
         steps = party(phrase, *a, **k)
         result = steps[-1][-1]
 
-        if ratio(phrase.lower(), result.lower()) < 0.7:
+        # we do this both in and out of order so that cases where spaces are
+        # removed or replaced don't cause the false assertion that a party is
+        # interesting, but we have different targets because word order changes
+        # often *are* interesting, but only if at least something else has
+        # changed
+        #
+        # case in point, in testing while not doing this, the translation of
+        # 'Pandemic Express' to 'Pandemic-Express' was returned as an
+        # interesting party, when it obviously isn't
+        #
+        # the specific numbers here may need to be calibrated over time; i only
+        # sampled about fifty parties with this configuration
+
+        if (
+            ratio(phrase.lower(), result.lower()) < 0.7
+        ) and (
+            ratio(
+                ignore_word_order(phrase.lower()),
+                ignore_word_order(result.lower()),
+            ) < 0.9
+        ):
             return steps
 
 
