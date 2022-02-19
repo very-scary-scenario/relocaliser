@@ -20,25 +20,28 @@ than an hour after the clue was posted.
 
 ## Playing locally (or making your own frontend)
 
-This is more complicated. You'll need to get [Yandex
-Translate](https://tech.yandex.com/translate/) and [Giant
-Bomb](http://www.giantbomb.com/api/) API keys, and put them into a `keys.py`
-file alongside the other files in your local version. You should format it like
-this:
+You'll need to get yourself a [Giant Bomb](http://www.giantbomb.com/api/) API
+key and put it into a `keys.py` file alongside the other files in your local
+version. You should format it like this:
 
 ```python
-yandex_translate = 'your yandex translate api key'
 giantbomb = 'your giant bomb api key'
 ```
 
-A prototype for this file can be found in `keys.py.prototype`. (If you only want to play locally, you can ignore the Twitter-related lines.)
+A prototype for this file can be found in `keys.py.prototype`. (If you only
+want to play locally, you can ignore the Twitter-related lines.)
 
 You'll then need to `cd` to your cloned repository and run `pip3 install -r
-requirements.txt`. Then, you should be able to play the game on the command
-line by running `python3 game.py`.
+requirements.txt`. Once you've done that, you should install Argos Translate's
+language models as per [their documentation][argos].
+
+[argos]: https://github.com/argosopentech/argos-translate#importing-new-pairs-through-the-cli
+
+With all that done, you should be able to play the game on the command line by
+running `python3 game.py`.
 
 If you want to write another frontend, you should be able to import everything
-you need from `game.py`.
+you need from `game.py`, and look at `twitter.py` as an example.
 
 ## Running the twitter bot
 
