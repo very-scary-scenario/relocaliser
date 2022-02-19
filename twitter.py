@@ -8,7 +8,6 @@ import tweepy
 
 from game import Game, camel_registry
 import keys
-from languages import languages
 from image import generate_image
 
 auth = tweepy.OAuthHandler(keys.consumer_key, keys.consumer_secret)
@@ -16,6 +15,8 @@ auth.set_access_token(keys.access_token, keys.access_token_secret)
 api = tweepy.API(auth)
 
 handle = auth.get_username()
+
+ALT_TEXT_LENGTH = 420
 
 GAMES_DIR = os.path.join(os.path.dirname(__file__), 'games')
 if not os.path.isdir(GAMES_DIR):
@@ -57,17 +58,17 @@ class TwitterGame:
     def get_alt_text(self) -> str:
         # Make best effort to include all information within 420 characters
         alt_text = " » ".join("{}: {}".format(
-            languages[step[0]], step[-1]) for step in self.game.steps)
-        if len(alt_text) <= 420:
+            lang.name, phrase) for lang, phrase in self.game.steps)
+        if len(alt_text) <= ALT_TEXT_LENGTH:
             return alt_text
 
         alt_text = " » ".join("{}: {}".format(
-            step[0], step[-1]) for step in self.game.steps)
+            lang.code, phrase) for lang, phrase in self.game.steps)
 
-        if len(alt_text) <= 420:
+        if len(alt_text) <= ALT_TEXT_LENGTH:
             return alt_text
 
-        return alt_text[:419] + "…"
+        return alt_text[:ALT_TEXT_LENGTH-1] + "…"
 
     def tweet_image(self, status: str, in_reply_to_status_id: ID_TYPE = None) -> None:
         image_path = os.path.join(IMAGES_DIR,
