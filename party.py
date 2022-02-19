@@ -1,38 +1,24 @@
 import random
-import requests
 from Levenshtein import ratio
+from typing import List, Tuple
 
 from giantbomb import get_name
-from keys import yandex_translate
+from argostranslate.translate import Language, get_installed_languages
 from text import ignore_word_order
 
 
-def _api(method, **params):
-    resp = requests.get(
-        'https://translate.yandex.net/api/v1.5/tr.json/{}'
-        .format(method),
-        params={
-            'key': yandex_translate,
-            **params,
-        }
-    )
-    resp.raise_for_status()
-    return resp.json()
+ENGLISH: Language = [lang for lang in get_installed_languages() if lang.code == 'en'][0]
 
 
-def get_directions():
-    return list(
-        tuple(r.split('-'))
-        for r in _api('getLangs')['dirs']
-    )
+def get_directions() -> List[Tuple[Language, Language]]:
+    return [
+        (source, destination)
+        for source in get_installed_languages()
+        for destination in get_installed_languages()
+    ]
 
 
-def translate(text, direction):
-    resp, = _api('translate', text=text, lang='-'.join(direction))['text']
-    return resp
-
-
-def build_route(steps=8, source='en', target='en'):
+def build_route(step_count: int, source: Language, target: Language) -> List[Tuple[Language, Language]]:
     """
     Build a random route through the translator with as many steps as
     requested, starting at `source` and ending at `target`
@@ -40,20 +26,20 @@ def build_route(steps=8, source='en', target='en'):
 
     directions = get_directions()
     current_lang = source
-    route = []
+    route: List[Tuple[Language, Language]] = []
 
     while not route:
-        for n in range(steps):
+        for n in range(step_count):
             options = [
                 d for d in directions
-                if current_lang == d[0]
+                if current_lang.code == d[0].code
             ]
 
-            if n == (steps - 1):
+            if n == (step_count - 1):
                 # this is the last step, we need to get to our target
                 options = [
                     o for o in options
-                    if o[-1] == target
+                    if o[-1].code == target.code
                 ]
 
             if not options:
@@ -66,27 +52,27 @@ def build_route(steps=8, source='en', target='en'):
     return route
 
 
-def party(phrase, source='en', **params):
-    route = build_route(source=source, **params)
+def party(phrase: str, step_count: int, source: Language, target: Language) -> List[Tuple[Language, str]]:
+    route = build_route(step_count, source, target)
     steps = [(source, phrase)]
 
-    for direction in route:
-        steps.append((direction[-1], translate(
-            text=steps[-1][-1],
-            direction=direction,
-        )))
+    for source_language, destination_language in route:
+        translation = source_language.get_translation(destination_language)
+        steps.append((destination_language, translation.translate(steps[-1][-1])))
 
     return steps
 
 
-def interesting_party(*a, **k):
+def interesting_party(
+    step_count: int = 8, source: Language = ENGLISH, target: Language = ENGLISH,
+) -> List[Tuple[Language, str]]:
     while True:
         while True:
             phrase = get_name()
             if len(phrase) < 100:
                 break
 
-        steps = party(phrase, *a, **k)
+        steps = party(phrase, step_count, source, target)
         result = steps[-1][-1]
 
         # we do this both in and out of order so that cases where spaces are
@@ -114,4 +100,4 @@ def interesting_party(*a, **k):
 
 
 if __name__ == '__main__':
-    print('\n'.join(': '.join(i) for i in interesting_party()))
+    print('\n'.join(f'{lang.code}: {phrase}' for lang, phrase in interesting_party()))

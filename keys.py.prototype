@@ -4,9 +4,6 @@
 # See http://www.giantbomb.com/api/
 giantbomb = ''
 
-# See https://tech.yandex.com/translate/
-yandex_translate = ''
-
 # See https://apps.twitter.com/
 consumer_key = ''
 consumer_secret = ''

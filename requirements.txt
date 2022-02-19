@@ -1,8 +1,12 @@
+argostranslate
 beautifulsoup4
-lxml
-requests
-python-Levenshtein
-tweepy==3.5.0
-camel==0.1
 cairocffi
 cairosvg
+camel==0.1
+flake8
+lxml
+mypy
+python-Levenshtein
+requests
+tweepy==3.5.0
+types-requests
