@@ -33,7 +33,7 @@ camel = Camel([camel_registry])
 class TwitterGame:
     def __init__(
         self, api: tweepy.API, game: Game, initial_status_id: ID_TYPE, trigger_status_ids: List[ID_TYPE] = None,
-        end_at: datetime = None, over: bool = False, seen_statuses: list[ID_TYPE] = None,
+        end_at: datetime = None, over: bool = False, seen_statuses: List[ID_TYPE] = None,
     ) -> None:
         self.game = game
         self.initial_status_id = initial_status_id
