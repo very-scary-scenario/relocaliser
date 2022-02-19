@@ -1,4 +1,5 @@
 import random
+from typing import Optional, Set
 
 from bs4 import BeautifulSoup
 import requests
@@ -7,18 +8,23 @@ import keys
 
 
 LIMIT = 100
+GAME_ID_TYPE = int  # i think? i should check
 
 
-def giantbomb(method, **params):
+def giantbomb(method: str, offset: int = None) -> dict:
+    params = {
+        'format': 'json',
+        'limit': str(LIMIT),
+        'sort': 'id:asc',
+        'api_key': keys.giantbomb,
+    }
+
+    if offset is not None:
+        params['offset'] = str(offset)
+
     resp = requests.get(
         'https://www.giantbomb.com/api/{}/'.format(method),
-        params={
-            'format': 'json',
-            'limit': LIMIT,
-            'sort': 'id:asc',
-            'api_key': keys.giantbomb,
-            **params,
-        },
+        params=params,
         headers={
             'user-agent': 'unshuffle-source-giantbomb/0.0',
         },
@@ -27,8 +33,8 @@ def giantbomb(method, **params):
     return resp.json()
 
 
-def _get_name():
-    seen_ids = set()
+def _get_name() -> Optional[str]:
+    seen_ids: Set[GAME_ID_TYPE] = set()
     total = giantbomb('games')['number_of_total_results']
 
     games = giantbomb(
@@ -56,9 +62,11 @@ def _get_name():
             name = name.replace('  ', ' ')
 
         return name
+    else:
+        return None
 
 
-def get_name():
+def get_name() -> str:
     while True:
         name = _get_name()
         if name:

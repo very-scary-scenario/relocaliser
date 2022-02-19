@@ -1,7 +1,10 @@
-import cairocffi as cairo
-from cairosvg import svg2png
 from io import BytesIO
 import os
+from typing import List, Tuple
+
+from argostranslate.translate import Language
+import cairocffi as cairo
+from cairosvg import svg2png
 
 # Yes going through cairo to a png and then back into cairo again
 # But all SVG libraries are hot garbage and most don't work at all
@@ -13,7 +16,7 @@ known_langs = set([filename[:-4] for filename in os.listdir("flags")
                    if filename != "unknown.svg"])
 
 
-def generate_image(steps, filename):
+def generate_image(steps: List[Tuple[Language, str]], filename: str) -> None:
     # Set all the constants!
     # Possibly a better way to achieve this?
     top_margin = 75
@@ -54,8 +57,8 @@ def generate_image(steps, filename):
     context = cairo.Context(image)
 
     for i, (lang, title) in enumerate(steps):
-        if lang in known_langs:
-            flag = "flags/" + lang + ".svg"
+        if lang.code in known_langs:
+            flag = "flags/" + lang.code + ".svg"
         else:
             flag = "flags/unknown.svg"
         flag = BytesIO(svg2png(url=flag, ))
@@ -86,7 +89,16 @@ def generate_image(steps, filename):
 
 
 if __name__ == "__main__":
-    steps = [("ru", "ру́сский язы"),
-             ("ja", "こんにちは"),
-             ("en", "Done!")]
-    generate_image(steps, "test.png")
+    from argostranslate.translate import get_installed_languages
+    from random import choice
+
+    generate_image([
+        (
+            choice(get_installed_languages()), choice([
+                "ру́сский язы",
+                "こんにちは",
+                "Done!",
+            ])
+        )
+        for i in range(10)
+    ], "test.png")

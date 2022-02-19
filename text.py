@@ -1,4 +1,4 @@
-def normalise(text):
+def normalise(text: str) -> str:
     return (text.replace('“', '"')
             .replace('”', '"')
             .replace("‘", "'")
@@ -8,5 +8,5 @@ def normalise(text):
             .replace('é', 'e'))
 
 
-def ignore_word_order(text):
+def ignore_word_order(text: str) -> str:
     return ' '.join(sorted(text.split(' ')))
