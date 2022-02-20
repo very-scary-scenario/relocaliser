@@ -11,18 +11,22 @@ KNOWN_LANGS = set([
 
 WIDTH = 800
 STEP_SIZE = 100
-VERTICAL_MARGIN = 175
+VERTICAL_MARGIN = 230
 
 HERE = os.path.realpath(os.path.join(__file__, '..'))
 
 
 def _generate_image(driver: WebDriver, steps: List[Tuple[Language, str]], filename: str) -> None:
-    driver.set_window_size(WIDTH, STEP_SIZE * len(steps) + VERTICAL_MARGIN)
+    driver.set_window_size(WIDTH, 100)  # we'll be setting the height manually in a bit
     driver.get(f'file:{os.path.join(HERE, "summary.html")}')
     steps_json = [{
-        'code': lang.code if lang.code in KNOWN_LANGS else 'unknown', 'phrase': phrase
+        'flag': lang.code if lang.code in KNOWN_LANGS else 'unknown',
+        'phrase': phrase,
+        'name': lang.name,
     } for lang, phrase in steps]
-    driver.execute_script(f"ingestSteps({json.dumps(steps_json)})")
+    driver.set_window_size(
+        WIDTH, driver.execute_script(f"return ingestSteps({json.dumps(steps_json)})") + VERTICAL_MARGIN,
+    )
 
     with open(filename, 'wb') as png:
         png.write(driver.get_screenshot_as_png())

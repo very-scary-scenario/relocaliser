@@ -12,32 +12,46 @@
       html {
         background-color: black;
         color: white;
-        font-family: "Noto Sans";
-        font-size: 48px;
+        overflow: hidden;  /* prevent the scrollbar from hecking up our height calculation */
       }
 
-      li::before {
-        content: attr(data-language-code);
-        display: inline-block;
-        width: 2em;
-        text-align: center;
+      table {
+        font-family: "Noto Sans";
+        font-size: 35px;
+        padding: 50px;
+      }
+
+      td {
+        padding: 10px 15px;
       }
     </style>
   </head>
   <body>
-    <ul id="target"></ul>
+    <table id="target"></table>
 
     <script>
-      const targetList = document.getElementById('target')
+      const target = document.getElementById('target')
       const ingestSteps = (steps) => {
-        targetList.innerHTML = ''
+        target.innerHTML = ''
 
         for (let step of steps) {
-          const li = document.createElement('li')
-          li.dataset.languageCode = step.code
-          li.innerText = step.phrase
-          targetList.appendChild(li)
+          const row = document.createElement('tr')
+
+          const flagCell = document.createElement('td')
+          const flag = document.createElement('img')
+          flag.setAttribute('src', `flags/${step.flag}.svg`)
+          flagCell.appendChild(flag)
+
+          const phraseCell = document.createElement('td')
+          phraseCell.appendChild(document.createTextNode(step.phrase))
+
+          row.appendChild(flagCell)
+          row.appendChild(phraseCell)
+
+          target.appendChild(row)
         }
+
+        return target.offsetHeight
       }
     </script>
   </body>
