@@ -1,0 +1,36 @@
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>relocaliser summary</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        border: 0;
+      }
+
+      html {
+        background-color: black;
+        color: white;
+        font-family: "Noto Sans";
+        font-size: 48px;
+      }
+    </style>
+  </head>
+  <body>
+    <ul id="target"></ul>
+
+    <script>
+      const targetList = document.getElementById('target')
+      const ingestSteps = (steps) => {
+        targetList.innerHTML = ''
+
+        for (let step of steps) {
+          const li = document.createElement('li')
+          li.innerText = step
+          targetList.appendChild(li)
+        }
+      }
+    </script>
+  </body>
+</html>
