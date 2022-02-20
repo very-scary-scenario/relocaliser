@@ -45,7 +45,9 @@ if __name__ == "__main__":
     phrases = [
         "ру́сский язы",
         "こんにちは",
+        "This entry is too long to fit cleanly on one line, and should be wrapped",
         "안녕하세요",
+        "مرحبًا",
         "Done!",
     ]
     generate_image([(
