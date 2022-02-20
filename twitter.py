@@ -143,6 +143,8 @@ class TwitterGame:
             return True
 
     def on_status(self, status: tweepy.Status) -> bool:
+        print(f'handling status: {status.id} :: {status.text}')
+
         rv = self.handle_play(status)
 
         if rv is False:
