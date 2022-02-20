@@ -15,6 +15,13 @@
         font-family: "Noto Sans";
         font-size: 48px;
       }
+
+      li::before {
+        content: attr(data-language-code);
+        display: inline-block;
+        width: 2em;
+        text-align: center;
+      }
     </style>
   </head>
   <body>
@@ -27,6 +34,7 @@
 
         for (let step of steps) {
           const li = document.createElement('li')
+          li.dataset.languageCode = step.code
           li.innerText = step.phrase
           targetList.appendChild(li)
         }

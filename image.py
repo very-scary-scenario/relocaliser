@@ -19,9 +19,9 @@ HERE = os.path.realpath(os.path.join(__file__, '..'))
 def _generate_image(driver: WebDriver, steps: List[Tuple[Language, str]], filename: str) -> None:
     driver.set_window_size(WIDTH, STEP_SIZE * len(steps) + VERTICAL_MARGIN)
     driver.get(f'file:{os.path.join(HERE, "summary.html")}')
-    steps_json = [
-        {'code': lang.code, 'phrase': phrase} for lang, phrase in steps
-    ]
+    steps_json = [{
+        'code': lang.code if lang.code in KNOWN_LANGS else 'unknown', 'phrase': phrase
+    } for lang, phrase in steps]
     driver.execute_script(f"ingestSteps({json.dumps(steps_json)})")
 
     with open(filename, 'wb') as png:
