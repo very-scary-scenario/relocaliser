@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+import json
 import html
 import os
 from typing import List
@@ -87,7 +88,6 @@ class TwitterGame:
                 "text": self.get_alt_text()
             }
         }
-        json = tweepy.utils.import_simplejson()
         tweepy.binder.bind_api(api=api,
                                path='/media/metadata/create.json',
                                method='POST',
