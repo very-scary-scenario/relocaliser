@@ -92,13 +92,12 @@ if __name__ == "__main__":
     from argostranslate.translate import get_installed_languages
     from random import choice
 
-    generate_image([
-        (
-            choice(get_installed_languages()), choice([
-                "ру́сский язы",
-                "こんにちは",
-                "Done!",
-            ])
-        )
-        for i in range(10)
-    ], "test.png")
+    phrases = [
+        "ру́сский язы",
+        "こんにちは",
+        "안녕하세요",
+        "Done!",
+    ]
+    generate_image([(
+        choice(get_installed_languages()), phrases[i % len(phrases)]
+    ) for i in range(10)], "test.png")
