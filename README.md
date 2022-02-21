@@ -15,8 +15,8 @@ taken at random from [Giant Bomb's wiki](https://www.giantbomb.com/games/), so
 if you're struggling with what variation of the name of a game to use, consult
 their database.
 
-Games end when someone gets the answer right, or when a guess is submitted more
-than an hour after the clue was posted.
+Games end when someone gets the answer right, or eight hours after the clue was
+posted.
 
 ## Playing locally (or making your own frontend)
 
