@@ -15,6 +15,7 @@ def get_directions() -> List[Tuple[Language, Language]]:
         (source, destination)
         for source in get_installed_languages()
         for destination in get_installed_languages()
+        if source.code != destination.code
     ]
 
 
