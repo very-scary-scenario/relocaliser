@@ -11,6 +11,9 @@ ENGLISH: Language = [lang for lang in get_installed_languages() if lang.code == 
 
 
 def get_directions() -> List[Tuple[Language, Language]]:
+    # argos translate, the translation engine we're currently using, supports
+    # translating between all of the languages it provides, so we can just
+    # return every combination here:
     return [
         (source, destination)
         for source in get_installed_languages()
