@@ -1,0 +1,58 @@
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>relocaliser summary</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        border: 0;
+      }
+
+      html {
+        background-color: black;
+        color: white;
+        overflow: hidden;  /* prevent the scrollbar from hecking up our height calculation */
+      }
+
+      table {
+        font-family: "Noto Sans";
+        font-size: 35px;
+        padding: 50px;
+      }
+
+      td {
+        padding: 10px 15px;
+      }
+    </style>
+  </head>
+  <body>
+    <table id="target"></table>
+
+    <script>
+      const target = document.getElementById('target')
+      const ingestSteps = (steps) => {
+        target.innerHTML = ''
+
+        for (let step of steps) {
+          const row = document.createElement('tr')
+
+          const flagCell = document.createElement('td')
+          const flag = document.createElement('img')
+          flag.setAttribute('src', `flags/${step.flag}.svg`)
+          flagCell.appendChild(flag)
+
+          const phraseCell = document.createElement('td')
+          phraseCell.appendChild(document.createTextNode(step.phrase))
+
+          row.appendChild(flagCell)
+          row.appendChild(phraseCell)
+
+          target.appendChild(row)
+        }
+
+        return target.offsetHeight
+      }
+    </script>
+  </body>
+</html>

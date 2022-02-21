@@ -1,12 +1,12 @@
 argostranslate
 beautifulsoup4
-cairocffi
-cairosvg
 camel==0.1
 flake8
 lxml
 mypy
 python-Levenshtein
 requests
+selenium
 tweepy==3.8.0
 types-requests
+types-selenium
