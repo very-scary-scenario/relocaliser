@@ -10,8 +10,6 @@ KNOWN_LANGS = set([
 ])
 
 WIDTH = 800
-STEP_SIZE = 100
-VERTICAL_MARGIN = 230
 
 HERE = os.path.realpath(os.path.join(__file__, '..'))
 
@@ -24,9 +22,9 @@ def _generate_image(driver: WebDriver, steps: List[Tuple[Language, str]], filena
         'phrase': phrase,
         'name': lang.name,
     } for lang, phrase in steps]
-    driver.set_window_size(
-        WIDTH, driver.execute_script(f"return ingestSteps({json.dumps(steps_json)})") + VERTICAL_MARGIN,
-    )
+
+    driver.execute_script(f"ingestSteps({json.dumps(steps_json)})")
+    driver.set_window_size(WIDTH, driver.execute_script("return document.documentElement.clientHeight"))
 
     with open(filename, 'wb') as png:
         png.write(driver.get_screenshot_as_png())
