@@ -6,6 +6,8 @@ camel==0.1
 flake8
 lxml
 mypy
+pangocairocffi
+pangocffi
 python-Levenshtein
 requests
 tweepy==3.8.0
