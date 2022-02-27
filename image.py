@@ -23,6 +23,7 @@ FONT_PROPS = {
     'name': 'FreeSans',
     'colour': (1, 1, 1),
     'default_size': 48,
+    'max_aspect_ratio': 0.7,
     'min_size': 8
 }
 
@@ -31,7 +32,7 @@ def get_text(
         context: cairo.Context,
         text: str,
         text_width,
-        max_aspect_ratio: float = 0.7,
+        max_aspect_ratio: float = FONT_PROPS['max_aspect_ratio'],
         font_size: float = FONT_PROPS['default_size']
 ) -> pango.Layout:
     layout = pangocairo.create_layout(context)
