@@ -19,12 +19,15 @@ known_langs = set([filename[:-4] for filename in os.listdir("flags")
 
 PANGO_SCALE = pango.units_from_double(1)
 
+RESCALE_WIDTH = True
+TRIM_EXCESS_WIDTH = False
 FONT_PROPS = {
     'name': 'FreeSans',
     'colour': (1, 1, 1),
     'default_size': 48,
     'max_aspect_ratio': 0.7,
-    'min_size': 8
+    'min_size': 8,
+    'rescale_text': False
 }
 
 
@@ -47,13 +50,13 @@ def get_text(
     layout.set_alignment(pango.Alignment.LEFT)
 
     font_scale_step = 0.9
-    while ((
+    while FONT_PROPS['rescale_text'] and (
             layout.get_extents()[1].height
             > layout.get_extents()[1].width * max_aspect_ratio
     ) and (
             (font_size := font_scale_step * font_size) >=
             FONT_PROPS['min_size']
-    )):
+    ):
         desc.set_size(int(font_size * PANGO_SCALE))
         layout.set_font_description(desc)
 
@@ -101,17 +104,69 @@ def place_flag(
     context.paint()
 
 
-def get_full_text_height(
+def get_text_layouts(
         steps: List[Tuple[Language, str]],
         text_width: float
-) -> float:
+) -> List[pango.Layout]:
     buf_width, buf_height = 50, 50
     buffer = cairo.ImageSurface(cairo.FORMAT_ARGB32, buf_width, buf_height)
     context = cairo.Context(buffer)
 
-    layouts = [get_text(context, text, text_width) for _, text in steps]
+    return [get_text(context, text, text_width) for _, text in steps]
+
+
+def get_full_text_height(
+        steps: List[Tuple[Language, str]],
+        text_width: float
+) -> float:
+    layouts = get_text_layouts(steps, text_width)
     heights = [layout.get_extents()[1].height for layout in layouts]
     return sum(heights) / PANGO_SCALE
+
+
+def get_max_text_width(
+        steps: List[Tuple[Language, str]],
+        text_area_width: float
+) -> float:
+    layouts = get_text_layouts(steps, text_area_width)
+    widths = [layout.get_extents()[1].width for layout in layouts]
+    return max(widths) / PANGO_SCALE
+
+
+def get_image_dimensions(
+        steps: List[Tuple[Language, str]],
+        text_hposition: float,
+        right_margin: float,
+        top_margin: float,
+        bottom_margin: float,
+        row_pad: float
+) -> Tuple[float, float]:
+    max_aspect_ratio = 1.5
+    width_step = 50
+
+    # Start one step below the actual width to avoid having to fudge
+    width = 800 - width_step
+    height = None
+
+    while (
+            (height is None)
+            or (RESCALE_WIDTH and height / width > max_aspect_ratio)
+    ):
+        width = int(width + width_step)
+        text_width = width - text_hposition - right_margin
+        height = int(
+            get_full_text_height(steps, text_width) + (len(steps) - 1) * row_pad
+            + top_margin + bottom_margin
+        )
+
+    if TRIM_EXCESS_WIDTH:
+        # Currently this does not work, as setting the width to the one
+        # reported by Cairo causes the text to actually not fit and wrap
+        # longer.
+        # TODO: Make this work to avoid unsightly black borders.
+        text_width = get_max_text_width(steps, text_width)
+        width = int(text_width + text_hposition + right_margin + 1)
+    return width, height
 
 
 def generate_image(steps: List[Tuple[Language, str]], filename: str) -> None:
@@ -119,7 +174,7 @@ def generate_image(steps: List[Tuple[Language, str]], filename: str) -> None:
     # Possibly a better way to achieve this?
     top_margin = 75
     left_margin = 100
-    right_margin = 150
+    right_margin = 70
     bottom_margin = 100
     row_pad = 40
 
@@ -132,12 +187,11 @@ def generate_image(steps: List[Tuple[Language, str]], filename: str) -> None:
 
     text_indent = 36
     text_hposition = left_margin + flag_width + text_indent
-    text_width = width - text_hposition - right_margin
 
-    height = int(
-        get_full_text_height(steps, text_width) + (len(steps) - 1) * row_pad
-        + top_margin + bottom_margin
+    width, height = get_image_dimensions(
+        steps, text_hposition, right_margin, top_margin, bottom_margin, row_pad
     )
+    text_width = width - text_hposition - right_margin
 
     image = cairo.ImageSurface(cairo.FORMAT_ARGB32, width, height)
     context = cairo.Context(image)
