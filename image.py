@@ -1,3 +1,4 @@
+from html import escape
 from io import BytesIO
 import os
 from typing import List, Tuple
@@ -46,7 +47,7 @@ def get_text(
 
     layout.set_width(text_width * PANGO_SCALE)
     layout.set_wrap(pango.WrapMode.WORD)
-    layout.set_markup(text)
+    layout.set_markup(escape(text))
     layout.set_alignment(pango.Alignment.LEFT)
 
     font_scale_step = 0.9
@@ -228,6 +229,8 @@ if __name__ == "__main__":
         "ру́сский язы",
         "こんにちは",
         "This entry is too long to fit cleanly on one line, and should be wrapped",
+        "<B>Not bold</B>",
+        "Symbols like & work",
         "안녕하세요",
         "مرحبًا",
         "Done!",
